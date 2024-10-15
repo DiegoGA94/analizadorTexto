@@ -15,12 +15,18 @@ public class Main {
         int palabrasSobresdrujulas = contarPalabrasSobresdrujulas(texto);
 
         int palabrasInicianConL = contarPalabrasInicianConL(texto);
+        int palabrasFinalizanConAdo = contarPalabrasFinalizanConAdo(texto);
+        int letrasT = contarLetrasT(texto);
+        int letrasA = contarLetrasA(texto);
 
 // Mostrar resultados
         System.out.println("Cantidad de palabras esdrújulas: " + palabrasEsdrujulas);
         System.out.println("Cantidad de palabras agudas: " + palabrasAgudas);
         System.out.println("Cantidad de palabras sobresdrújulas: " + palabrasSobresdrujulas);
-        System.out.println("Cantidad de palabras que inician con 'L': " + palabrasInicianConL);
+        System.out.println("Cantidad de palabras que inician con la letra 'L': " + palabrasInicianConL);
+        System.out.println("Cantidad de palabras que finalizan con 'ado': " + palabrasFinalizanConAdo);
+        System.out.println("Cantidad de letras 'T': " + letrasT);
+        System.out.println("Cantidad de letras 'A': " + letrasA);
 
     }
 
@@ -36,6 +42,20 @@ public class Main {
         return contador;
 
     }
+
+    // Función para contar palabras que finalizan con "ado"
+    public static int contarPalabrasFinalizanConAdo(String texto) {
+        String[] palabras = texto.split("\\s+");
+        int contador = 0;
+        for (String palabra : palabras) {
+            palabra = palabra.toLowerCase().replaceAll("[^a-zA-Záéíóúüñ]", "");
+            if (palabra.toLowerCase().endsWith("ado")) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
     // Vocales acentuadas
     private static final String VOCALES_ACENTUADAS = "[áéíóúÁÉÍÓÚ]";
 
@@ -105,5 +125,29 @@ public class Main {
             return matcher.start(); // Devuelve la posición del acento
         }
         return -1; // Si no hay acento explícito, devuelve -1
+    }
+
+    // Función para saber cuantas letras 'T' hay en el texto
+    public static int contarLetrasT(String texto) {
+        int contador = 0;
+        texto = texto.toLowerCase();
+        for (int i = 0; i < texto.length(); i++) {
+            if (texto.charAt(i) == 't') {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
+    // Función para saber cuantas letras 'A' hay en el texto
+    public static int contarLetrasA(String texto) {
+        int contador = 0;
+        texto = texto.toLowerCase();
+        for (int i = 0; i < texto.length(); i++) {
+            if (texto.charAt(i) == 'a') {
+                contador++;
+            }
+        }
+        return contador;
     }
 }
