@@ -130,9 +130,8 @@ public class Main {
     // Función para saber cuantas letras 'T' hay en el texto
     public static int contarLetrasT(String texto) {
         int contador = 0;
-        texto = texto.toLowerCase();
         for (int i = 0; i < texto.length(); i++) {
-            if (texto.charAt(i) == 't') {
+            if (texto.charAt(i) == 'T') {
                 contador++;
             }
         }
@@ -142,9 +141,8 @@ public class Main {
     // Función para saber cuantas letras 'A' hay en el texto
     public static int contarLetrasA(String texto) {
         int contador = 0;
-        texto = texto.toLowerCase();
         for (int i = 0; i < texto.length(); i++) {
-            if (texto.charAt(i) == 'a') {
+            if (texto.charAt(i) == 'A') {
                 contador++;
             }
         }
