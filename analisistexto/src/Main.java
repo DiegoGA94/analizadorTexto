@@ -35,7 +35,7 @@ public class Main {
         String[] palabras = texto.split("\\s+");
         int contador = 0;
         for (String palabra : palabras) {
-            if (palabra.toLowerCase().startsWith("l")) {
+            if (palabra.startsWith("L")) {
                 contador++;
             }
         }
