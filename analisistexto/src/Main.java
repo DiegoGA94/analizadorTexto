@@ -1,25 +1,45 @@
+package analisistexto.src;
+
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        StringBuilder texto = new StringBuilder();
 
 // Solicitar el texto al usuario
         System.out.println("Por favor, ingrese el texto:");
-        String texto = scanner.useDelimiter("\\A").nextLine();
+
+        while (true) {
+            String linea = scanner.nextLine();
+            if   (linea.isEmpty()) {
+                break;
+            }
+            texto.append(linea).append("\n");
+        }
+        String textoFinal = texto.toString();
 
 // Análisis del texto
-        int palabrasEsdrujulas = contarPalabrasEsdrujulas(texto);
-        int palabrasAgudas = contarPalabrasAgudas(texto);
-        int palabrasSobresdrujulas = contarPalabrasSobresdrujulas(texto);
+        int espacios = contadorEspacio(textoFinal);
+        int lineas = contadorLinea(textoFinal);
+        int puntos = contadorPunto(textoFinal);
 
-        int palabrasInicianConL = contarPalabrasInicianConL(texto);
-        int palabrasFinalizanConAdo = contarPalabrasFinalizanConAdo(texto);
-        int letrasT = contarLetrasT(texto);
-        int letrasA = contarLetrasA(texto);
+        int palabrasEsdrujulas = contarPalabrasEsdrujulas(textoFinal);
+        int palabrasAgudas = contarPalabrasAgudas(textoFinal);
+        int palabrasSobresdrujulas = contarPalabrasSobresdrujulas(textoFinal);
+
+        int palabrasInicianConL = contarPalabrasInicianConL(textoFinal);
+        int palabrasFinalizanConAdo = contarPalabrasFinalizanConAdo(textoFinal);
+        int letrasT = contarLetrasT(textoFinal);
+        int letrasA = contarLetrasA(textoFinal);
 
 // Mostrar resultados
+        System.out.println("Cantidad de espacios: " + espacios);
+        System.out.println("Cantidad de líneas: " + lineas);
+        System.out.println("Cantidad de puntos: " + puntos);
         System.out.println("Cantidad de palabras esdrújulas: " + palabrasEsdrujulas);
         System.out.println("Cantidad de palabras agudas: " + palabrasAgudas);
         System.out.println("Cantidad de palabras sobresdrújulas: " + palabrasSobresdrujulas);
@@ -29,13 +49,35 @@ public class Main {
         System.out.println("Cantidad de letras 'A': " + letrasA);
 
     }
+// Función para contar Espacios
+    public static int contadorEspacio(String texto){
+
+        int contadorEspacio = texto.length() - texto.replace(" ", "").length();
+        return contadorEspacio;
+    }
+// Función para contar las lineas
+    public static int contadorLinea(String texto){
+
+        if (texto.isEmpty()) {
+            return 0;
+        }else {
+            return texto.split("\n").length;
+        }
+    }
+// Función para contar los puntos
+    public static int contadorPunto(String texto){
+
+        int contadorPunto = texto.length() - texto.replace(".", "").length();
+        return contadorPunto;
+
+    }
 
     // Función para contar palabras que inician con "L"
     public static int contarPalabrasInicianConL(String texto) {
         String[] palabras = texto.split("\\s+");
         int contador = 0;
         for (String palabra : palabras) {
-            if (palabra.toLowerCase().startsWith("l")) {
+            if (palabra.startsWith("L")) {
                 contador++;
             }
         }
@@ -56,9 +98,6 @@ public class Main {
         return contador;
     }
 
-    // Vocales acentuadas
-    private static final String VOCALES_ACENTUADAS = "[áéíóúÁÉÍÓÚ]";
-
     // Función para contar palabras agudas
     public static int contarPalabrasAgudas(String texto) {
         String[] palabras = texto.split("\\s+");
@@ -76,10 +115,18 @@ public class Main {
     public static int contarPalabrasEsdrujulas(String texto) {
         String[] palabras = texto.split("\\s+");
         int contador = 0;
+        String patrones = "\\b\\w+[áéíóúÁÉÍÓÚ]\\w+\\b";
+        Pattern patronCompilado = Pattern.compile(patrones);
 
         for (String palabra : palabras) {
-            if (esEsdrujula(palabra)) {
-                contador++;
+
+            Matcher matcher = patronCompilado.matcher(palabra);
+
+            while (matcher.find()) {
+                String palabraEncontrada = matcher.group();
+                if (esEsdrujula(palabraEncontrada)) {
+                    contador++;
+                }
             }
         }
         return contador;
@@ -100,31 +147,60 @@ public class Main {
 
     // Función para determinar si una palabra es aguda
     private static boolean esAguda(String palabra) {
-        int posicionAcento = posicionDeAcento(palabra);
-        return posicionAcento == palabra.length() - 1; // Acento en la última sílaba
+        Silabeador silabeador=new Silabeador();
+        ArrayList<String> silabas = new ArrayList<String>();
+        silabas = silabeador.silabear(palabra);
+        if(silabas.size()>=1){
+            String silaba = silabas.get(silabas.size()-1);
+            for (char c : silaba.toCharArray()) {
+                if ("áéíóúÁÉÍÓÚ".indexOf(c) != -1) {
+                    return true; // Si encuentra una vocal con tilde, retorna true
+                }
+            }
+        }
+        return false;
     }
 
     // Función para determinar si una palabra es esdrújula
     private static boolean esEsdrujula(String palabra) {
-        int posicionAcento = posicionDeAcento(palabra);
-        return posicionAcento == palabra.length() - 3; // Acento en la antepenúltima sílaba
+        Silabeador silabeador=new Silabeador();
+        ArrayList<String> silabas = new ArrayList<String>();
+        silabas = silabeador.silabear(palabra);
+        if(silabas.size()>=3){
+            String silaba = silabas.get(silabas.size()-3);
+            for (char c : silaba.toCharArray()) {
+                if ("áéíóúÁÉÍÓÚ".indexOf(c) != -1) {
+                    return true; // Si encuentra una vocal con tilde, retorna true
+                }
+            }
+        }
+        return false;
     }
 
     // Función para determinar si una palabra es sobresdrújula
     private static boolean esSobresdrujula(String palabra) {
-        int posicionAcento = posicionDeAcento(palabra);
-        return posicionAcento < palabra.length() - 3; // Acento antes de la antepenúltima sílaba
-    }
+        Silabeador silabeador=new Silabeador();
+        ArrayList<String> silabas = new ArrayList<String>();
+        silabas = silabeador.silabear(palabra);
+        if(silabas.size()==4){
+            String silaba = silabas.get(silabas.size()-4);
 
-    // Función para obtener la posición del acento
-    private static int posicionDeAcento(String palabra) {
-        Pattern patron = Pattern.compile(VOCALES_ACENTUADAS);
-        java.util.regex.Matcher matcher = patron.matcher(palabra);
+            for (char c : silaba.toCharArray()) {
+                if ("áéíóúÁÉÍÓÚ".indexOf(c) != -1) {
+                    return true; // Si encuentra una vocal con tilde, retorna true
+                }
+            }
 
-        if (matcher.find()) {
-            return matcher.start(); // Devuelve la posición del acento
+        }else if(silabas.size()>4){
+            String silaba2 = silabas.get(silabas.size()-5);
+            for (char c : silaba2.toCharArray()) {
+                if ("áéíóúÁÉÍÓÚ".indexOf(c) != -1) {
+                    return true; // Si encuentra una vocal con tilde, retorna true
+                }
+            }
         }
-        return -1; // Si no hay acento explícito, devuelve -1
+
+        return false;
     }
 
     // Función para saber cuantas letras 'T' hay en el texto
